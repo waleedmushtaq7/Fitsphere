@@ -70,7 +70,7 @@ public class HabitsPage : BasePage
             if (e.PropertyName != TimePicker.TimeProperty.PropertyName) return;
             Safe(async () =>
             {
-                u.ReminderTime = tp.Time.ToString(@"hh\:mm");
+                u.ReminderTime = (tp.Time ?? new TimeSpan(18, 0, 0)).ToString(@"hh\:mm");
                 await Svc.Auth.SaveUserAsync();
                 await Svc.Reminders.RescheduleAsync();
             });

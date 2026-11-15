@@ -217,7 +217,7 @@ public static class Ui
             gv.Invalidate();
         }
         gv.StartInteraction += Pick;
-        gv.MoveInteraction += Pick;
+        gv.DragInteraction += Pick;
         return gv;
     }
 

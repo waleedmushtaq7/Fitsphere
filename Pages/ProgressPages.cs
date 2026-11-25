@@ -7,23 +7,20 @@ namespace FitSphere.Pages;
 public class ProgressPage : BasePage
 {
     readonly VerticalStackLayout _col = Column(20);
-    readonly ChipGroup _range = new(new[] { "30 days", "90 days", "1 year" }, false, new[] { "30 days" });
-    readonly ChipGroup _period = new(new[] { "Weekly", "Monthly" }, false, new[] { "Weekly" });
+    // Remember the selections; the chip rows themselves are rebuilt on every refresh
+    // (a view can't be attached to two parents at once).
+    string _rangeSel = "30 days";
+    string _periodSel = "Weekly";
 
-    public ProgressPage() : base(true)
-    {
-        _range.Changed += async () => await Busy(Refresh);
-        _period.Changed += async () => await Busy(Refresh);
-        SetBody(new ScrollView { Content = _col });
-    }
+    public ProgressPage() : base(true) => SetBody(new ScrollView { Content = _col });
 
     protected override async Task Refresh()
     {
         var goals = await Svc.Progress.GoalsAsync();
         var cons = await Svc.Habits.ConsistencyAsync();
-        int days = _range.Selected == "90 days" ? 90 : _range.Selected == "1 year" ? 365 : 30;
+        int days = _rangeSel == "90 days" ? 90 : _rangeSel == "1 year" ? 365 : 30;
         var weights = await Svc.Progress.WeightSeriesAsync(days);
-        var bars = _period.Selected == "Monthly" ? await Svc.Progress.WorkoutsPerMonthAsync(6) : await Svc.Progress.WorkoutsPerWeekAsync(8);
+        var bars = _periodSel == "Monthly" ? await Svc.Progress.WorkoutsPerMonthAsync(6) : await Svc.Progress.WorkoutsPerWeekAsync(8);
         var measures = await Svc.Progress.MeasurementsAsync();
         var records = (await Svc.Progress.RecordsAsync()).OrderByDescending(r => r.Date).Take(6).ToList();
         var insights = await Svc.Insights.BuildAsync();
@@ -32,6 +29,11 @@ public class ProgressPage : BasePage
         var allWeights = await Svc.Progress.RecordsAsync("Weight");
         var recent = allWeights.Where(r => r.Date.Date >= DateTime.Today.AddDays(-30)).ToList();
         double? change = recent.Count >= 2 ? recent.Last().Value - recent.First().Value : null;
+
+        var range = new ChipGroup(new[] { "30 days", "90 days", "1 year" }, false, new[] { _rangeSel });
+        range.Changed += async () => { _rangeSel = range.Selected; await Busy(Refresh); };
+        var period = new ChipGroup(new[] { "Weekly", "Monthly" }, false, new[] { _periodSel });
+        period.Changed += async () => { _periodSel = period.Selected; await Busy(Refresh); };
 
         _col.Children.Clear();
         _col.Add(Head("Progress", false, Ui.SmallBtn("+ Log", () => Navigation.PushAsync(new LogBodyPage()))));
@@ -55,14 +57,14 @@ public class ProgressPage : BasePage
 
         // ---- weight chart ----
         var wBox = new VerticalStackLayout { Spacing = 12 };
-        wBox.Add(_range);
+        wBox.Add(range);
         if (weights.Count >= 2) wBox.Add(Ui.LineChart(weights, "kg"));
         else wBox.Add(Ui.Empty("ic_scale", "Not enough data", "Log your weight at least twice to see a trend.", "Log weight", () => Navigation.PushAsync(new LogBodyPage())));
         _col.Add(Ui.Stack(10, Ui.SectionHeader("Body weight"), Ui.Card(wBox)));
 
         // ---- workouts chart ----
         var bBox = new VerticalStackLayout { Spacing = 12 };
-        bBox.Add(_period);
+        bBox.Add(period);
         bBox.Add(bars.Any(b => b.value > 0) ? Ui.BarChart(bars) : Ui.Empty("ic_workouts", "No workouts yet", "Completed workouts will be charted here."));
         _col.Add(Ui.Stack(10, Ui.SectionHeader("Workouts completed"), Ui.Card(bBox)));
 

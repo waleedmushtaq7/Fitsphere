@@ -10,10 +10,10 @@ public class AppShell : Shell
     {
         BackgroundColor = Ds.Bg;
         Shell.SetNavBarIsVisible(this, false);
-        Shell.SetTabBarBackgroundColor(this, Colors.White);
-        Shell.SetTabBarForegroundColor(this, Ds.Primary);
+        Shell.SetTabBarBackgroundColor(this, Ds.Card);
+        Shell.SetTabBarForegroundColor(this, Ds.Soft);
         Shell.SetTabBarUnselectedColor(this, Ds.Muted);
-        Shell.SetTabBarTitleColor(this, Ds.Primary);
+        Shell.SetTabBarTitleColor(this, Ds.Soft);
 
         var tabs = new TabBar();
         tabs.Items.Add(Tab("Home", "ic_home.png", () => new HomePage()));

@@ -6,6 +6,8 @@ namespace FitSphere;
 
 public class App : Application
 {
+    public App() => UserAppTheme = AppTheme.Dark;
+
     protected override Window CreateWindow(IActivationState activationState) => new Window(new SplashPage());
 
     /// <summary>Swap the whole window content (used after login / logout).</summary>

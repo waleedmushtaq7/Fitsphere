@@ -3,8 +3,9 @@ namespace FitSphere.UI;
 public class RingDrawable : IDrawable
 {
     public double Progress;
-    public Color Track = Ds.Mint;
-    public Color Fill = Ds.Primary;
+    public Color Track = Ds.Track;
+    public Color From = Ds.Primary;
+    public Color To = Ds.Magenta;
     public float Thickness = 12;
 
     public void Draw(ICanvas c, RectF r)
@@ -17,19 +18,22 @@ public class RingDrawable : IDrawable
 
         double p = Math.Clamp(Progress, 0, 1);
         if (p <= 0.001) return;
-        c.StrokeColor = Fill;
-        c.StrokeLineCap = LineCap.Round;
-        if (p >= 0.999) { c.DrawCircle(cx, cy, rad); return; }
 
-        var path = new PathF();
-        int steps = (int)Math.Max(4, 120 * p);
-        for (int i = 0; i <= steps; i++)
+        // Gradient stroke: many short round-capped segments whose colour moves from From to To.
+        c.StrokeLineCap = LineCap.Round;
+        int steps = (int)Math.Max(6, 140 * p);
+        for (int i = 0; i < steps; i++)
         {
-            double ang = -Math.PI / 2 + 2 * Math.PI * p * i / steps;
-            float x = cx + rad * (float)Math.Cos(ang), y = cy + rad * (float)Math.Sin(ang);
-            if (i == 0) path.MoveTo(x, y); else path.LineTo(x, y);
+            double a0 = -Math.PI / 2 + 2 * Math.PI * p * i / steps;
+            double a1 = -Math.PI / 2 + 2 * Math.PI * p * (i + 1) / steps;
+            float t = steps <= 1 ? 0 : (float)i / (steps - 1);
+            c.StrokeColor = Color.FromRgb(
+                From.Red + (To.Red - From.Red) * t,
+                From.Green + (To.Green - From.Green) * t,
+                From.Blue + (To.Blue - From.Blue) * t);
+            c.DrawLine(cx + rad * (float)Math.Cos(a0), cy + rad * (float)Math.Sin(a0),
+                       cx + rad * (float)Math.Cos(a1), cy + rad * (float)Math.Sin(a1));
         }
-        c.DrawPath(path);
     }
 }
 
@@ -75,7 +79,7 @@ public class LineChartDrawable : IDrawable
             {
                 if (i == 0) path.MoveTo(X(i), Y(Points[i].value)); else path.LineTo(X(i), Y(Points[i].value));
             }
-            c.StrokeColor = Ds.Primary; c.StrokeSize = 2.5f; c.StrokeLineCap = LineCap.Round; c.StrokeLineJoin = LineJoin.Round;
+            c.StrokeColor = Ds.Soft; c.StrokeSize = 2.5f; c.StrokeLineCap = LineCap.Round; c.StrokeLineJoin = LineJoin.Round;
             c.DrawPath(path);
         }
 
@@ -83,8 +87,8 @@ public class LineChartDrawable : IDrawable
         for (int i = 0; i < Points.Count; i++)
         {
             if (Points.Count > 16 && i != sel) continue;
-            c.FillColor = i == sel ? Ds.Primary : Colors.White;
-            c.StrokeColor = Ds.Primary; c.StrokeSize = 2;
+            c.FillColor = i == sel ? Ds.Soft : Ds.Card;
+            c.StrokeColor = Ds.Soft; c.StrokeSize = 2;
             c.FillCircle(X(i), Y(Points[i].value), i == sel ? 5 : 3.5f);
             c.DrawCircle(X(i), Y(Points[i].value), i == sel ? 5 : 3.5f);
         }
@@ -135,7 +139,7 @@ public class BarChartDrawable : IDrawable
             float bh = (float)(Bars[i].value / max) * h;
             if (Bars[i].value > 0) bh = Math.Max(bh, 6);
             float x = slot * i + (slot - bw) / 2, y = top + h - bh;
-            c.FillColor = i == sel ? Ds.Primary : Ds.BarIdle;
+            c.FillColor = i == sel ? Ds.Soft : Ds.BarIdle;
             if (bh > 0) c.FillRoundedRectangle(x, y, bw, bh, 6);
 
             c.FontSize = 10; c.FontColor = i == sel ? Ds.Text : Ds.Muted;

@@ -21,15 +21,15 @@ public static class Ui
     // ---------- Containers ----------
     public static RoundRectangle Round(double r) => new RoundRectangle { CornerRadius = new CornerRadius(r) };
 
-    public static Border Card(View content, Color bg = null, double radius = Ds.CardRadius, double pad = 16, bool shadow = true)
+    public static Border Card(View content, Color bg = null, double radius = Ds.CardRadius, double pad = 16, bool shadow = false, Brush brush = null)
     {
         var b = new Border
         {
-            Content = content, BackgroundColor = bg ?? Ds.Card, StrokeThickness = 0, Stroke = Brush.Transparent,
-            StrokeShape = Round(radius), Padding = new Thickness(pad)
+            Content = content, StrokeShape = Round(radius), Padding = new Thickness(pad),
+            StrokeThickness = 1, Stroke = Ds.Line
         };
-        if (shadow)
-            b.Shadow = new Shadow { Brush = new SolidColorBrush(Colors.Black), Opacity = 0.06f, Radius = 14, Offset = new Point(0, 4) };
+        if (brush != null) { b.Background = brush; b.StrokeThickness = 0; }
+        else b.BackgroundColor = bg ?? Ds.Card;
         return b;
     }
 
@@ -77,15 +77,14 @@ public static class Ui
         img.HorizontalOptions = LayoutOptions.Center;
         return new Border
         {
-            WidthRequest = size, HeightRequest = size, BackgroundColor = bg ?? Ds.Mint, StrokeThickness = 0,
+            WidthRequest = size, HeightRequest = size, BackgroundColor = bg ?? Ds.Tint, StrokeThickness = 0,
             StrokeShape = Round(Ds.ControlRadius), Content = img, VerticalOptions = LayoutOptions.Center
         };
     }
 
     public static Border IconButton(string icon, Func<Task> tap, double size = 40)
     {
-        var b = IconBadge(icon, size, Colors.White, 20);
-        b.Shadow = new Shadow { Brush = new SolidColorBrush(Colors.Black), Opacity = 0.06f, Radius = 10, Offset = new Point(0, 3) };
+        var b = IconBadge(icon, size, Ds.Field, 20);
         return b.OnTap(tap);
     }
 
@@ -111,20 +110,33 @@ public static class Ui
     }
 
     public static Button PrimaryBtn(string text, Func<Task> tap, Color bg = null, Color fg = null) => Btn(text, tap, bg ?? Ds.Primary, fg ?? Colors.White);
-    public static Button SoftBtn(string text, Func<Task> tap) => Btn(text, tap, Ds.Mint, Ds.Primary);
-    public static Button DangerBtn(string text, Func<Task> tap) => Btn(text, tap, Colors.White, Ds.Danger);
+    public static Button SoftBtn(string text, Func<Task> tap) => Btn(text, tap, Ds.Tint, Ds.Soft);
+    public static Button DangerBtn(string text, Func<Task> tap) => Btn(text, tap, Ds.Field, Ds.Danger);
 
     public static Button SmallBtn(string text, Func<Task> tap, Color bg = null, Color fg = null)
     {
-        var b = Btn(text, tap, bg ?? Ds.Mint, fg ?? Ds.Primary);
+        var b = Btn(text, tap, bg ?? Ds.Tint, fg ?? Ds.Soft);
         b.HeightRequest = 38; b.FontSize = 14; b.Padding = new Thickness(14, 0);
         return b;
     }
 
     public static Button LinkBtn(string text, Func<Task> tap, Color color = null)
     {
-        var b = Btn(text, tap, Colors.Transparent, color ?? Ds.Primary);
+        var b = Btn(text, tap, Colors.Transparent, color ?? Ds.Soft);
         b.HeightRequest = 40; b.FontSize = 14; b.Padding = new Thickness(6, 0);
+        return b;
+    }
+
+    /// <summary>Pill-shaped button (44 px). Pass a border colour for an outlined style.</summary>
+    public static Button PillBtn(string text, Func<Task> tap, Color bg, Color fg, Color border = null)
+    {
+        var b = new Button
+        {
+            Text = text, BackgroundColor = bg, TextColor = fg, CornerRadius = (int)Ds.PillRadius, HeightRequest = 44,
+            FontSize = 15, FontAttributes = FontAttributes.Bold, Padding = new Thickness(20, 0)
+        };
+        if (border != null) { b.BorderColor = border; b.BorderWidth = 1.5; }
+        b.Clicked += Safe(tap);
         return b;
     }
 
@@ -165,7 +177,7 @@ public static class Ui
     public static View Empty(string icon, string title, string sub, string buttonText = null, Func<Task> tap = null)
     {
         var s = new VerticalStackLayout { Spacing = 10, HorizontalOptions = LayoutOptions.Center, Padding = new Thickness(12, 18) };
-        var badge = IconBadge(icon, 64, Ds.Mint, 30);
+        var badge = IconBadge(icon, 64, Ds.Tint, 30);
         badge.HorizontalOptions = LayoutOptions.Center;
         s.Add(badge);
         s.Add(Txt(title, 17, true, align: TextAlignment.Center));
@@ -179,28 +191,32 @@ public static class Ui
         return s;
     }
 
-    public static View Bar(double value, double max, Color fill = null, double h = 8)
+    public static View Bar(double value, double max, Color fill = null, double h = 8) =>
+        fill == null ? GradBar(value, max, Ds.Primary, Ds.Magenta, h) : GradBar(value, max, fill, fill, h);
+
+    /// <summary>Rounded progress bar with a left-to-right gradient fill.</summary>
+    public static View GradBar(double value, double max, Color from, Color to, double h = 8)
     {
         double r = max <= 0 ? 0 : Math.Clamp(value / max, 0, 1);
         var g = new Grid { HeightRequest = h, ColumnSpacing = 0 };
         g.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(Math.Max(r, 0.0001), GridUnitType.Star)));
         g.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(Math.Max(1 - r, 0.0001), GridUnitType.Star)));
-        var track = new Border { BackgroundColor = Ds.Mint, StrokeThickness = 0, StrokeShape = Round(h / 2), HeightRequest = h };
+        var track = new Border { BackgroundColor = Ds.Track, StrokeThickness = 0, StrokeShape = Round(h / 2), HeightRequest = h };
         g.Add(track, 0, 0);
         Grid.SetColumnSpan(track, 2);
         if (r > 0)
-            g.Add(new Border { BackgroundColor = fill ?? Ds.Primary, StrokeThickness = 0, StrokeShape = Round(h / 2), HeightRequest = h }, 0, 0);
+            g.Add(new Border { Background = Ds.Gradient(from, to), StrokeThickness = 0, StrokeShape = Round(h / 2), HeightRequest = h }, 0, 0);
         return g;
     }
 
     /// <summary>Progress ring with a label in the middle.</summary>
-    public static View RingView(double progress, string big, string small = null, double size = 130, Color fill = null)
+    public static View RingView(double progress, string big, string small = null, double size = 130, Color from = null, Color to = null)
     {
-        var drawable = new RingDrawable { Progress = progress, Fill = fill ?? Ds.Primary, Thickness = size > 100 ? 12 : 8 };
+        var drawable = new RingDrawable { Progress = progress, From = from ?? Ds.Primary, To = to ?? Ds.Magenta, Thickness = size > 100 ? 12 : 8 };
         var g = new Grid { WidthRequest = size, HeightRequest = size };
         g.Add(new GraphicsView { Drawable = drawable });
         var s = new VerticalStackLayout { VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Center, Spacing = 0 };
-        s.Add(Txt(big, size > 100 ? 24 : 16, true, align: TextAlignment.Center));
+        s.Add(Txt(big, size > 100 ? 22 : 15, true, align: TextAlignment.Center));
         if (small != null) s.Add(Txt(small, 11, false, Ds.Muted, TextAlignment.Center));
         g.Add(s);
         return g;
@@ -245,11 +261,20 @@ public static class Ui
         g.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
         g.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         g.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-        g.Add(IconBadge(icon, 40, danger ? Color.FromArgb("#F5E3E0") : Ds.Mint, 20), 0, 0);
+        g.Add(IconBadge(icon, 40, danger ? Color.FromArgb("#3A2229") : Ds.Tint, 20), 0, 0);
         g.Add(texts, 1, 0);
         var chev = Icon("ic_chevron", 18);
         g.Add(chev, 2, 0);
         return Card(g, pad: 14).OnTap(tap);
+    }
+
+    /// <summary>Compact tappable tile: icon on top, title and short caption below. Fits two per row.</summary>
+    public static View QuickTile(string icon, string title, string subtitle, Func<Task> tap)
+    {
+        var badge = IconBadge(icon, 44, Ds.Tint, 22);
+        badge.HorizontalOptions = LayoutOptions.Start;
+        var s = Stack(12, badge, Stack(2, Txt(title, 17, true), Sub(subtitle, 12)));
+        return Card(s, pad: 16).OnTap(tap);
     }
 
     public static string Greeting() => DateTime.Now.Hour switch { < 12 => "Good morning", < 18 => "Good afternoon", _ => "Good evening" };

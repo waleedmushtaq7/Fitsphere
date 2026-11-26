@@ -25,7 +25,7 @@ public class FormInput : VerticalStackLayout
         };
         var box = new Border
         {
-            Content = Entry, BackgroundColor = Colors.White, Stroke = Ds.Line, StrokeThickness = 1,
+            Content = Entry, BackgroundColor = Ds.Field, Stroke = Ds.Line, StrokeThickness = 1,
             StrokeShape = Ui.Round(Ds.ControlRadius), Padding = new Thickness(14, 0), HeightRequest = Ds.ControlHeight
         };
         _error = Ui.Txt("", 12, false, Ds.Danger);
@@ -103,7 +103,7 @@ public class ChipGroup : ContentView
             bool on = Selection.Contains(item);
             var chip = new Border
             {
-                BackgroundColor = on ? Ds.Primary : Colors.White, Stroke = on ? Ds.Primary : Ds.Line, StrokeThickness = 1,
+                BackgroundColor = on ? Ds.Primary : Ds.Field, Stroke = on ? Ds.Primary : Ds.Line, StrokeThickness = 1,
                 StrokeShape = Ui.Round(Ds.ControlRadius), Padding = new Thickness(14, 0), HeightRequest = 38,
                 Margin = new Thickness(0, 0, 8, 8),
                 Content = new Label { Text = item, FontSize = 14, TextColor = on ? Colors.White : Ds.Text, VerticalOptions = LayoutOptions.Center }
@@ -148,9 +148,9 @@ public class Counter : HorizontalStackLayout
     {
         var b = new Border
         {
-            WidthRequest = 34, HeightRequest = 34, BackgroundColor = Ds.Mint, StrokeThickness = 0,
+            WidthRequest = 34, HeightRequest = 34, BackgroundColor = Ds.Tint, StrokeThickness = 0,
             StrokeShape = Ui.Round(Ds.ControlRadius),
-            Content = new Label { Text = text, FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Ds.Primary, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center }
+            Content = new Label { Text = text, FontSize = 18, FontAttributes = FontAttributes.Bold, TextColor = Ds.Soft, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center }
         };
         b.OnTap(() =>
         {

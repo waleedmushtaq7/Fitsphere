@@ -81,6 +81,25 @@ public class HabitService
     }
 
     /// <summary>
+    /// Workout streak: how many workouts in a row were completed without missing a scheduled one.
+    /// Rest days, free days and today's pending workout do not break it.
+    /// </summary>
+    public async Task<int> StreakAsync()
+    {
+        var today = DateTime.Today;
+        var from = today.AddDays(-120);
+        var st = await StatusAsync(from, today);
+        int streak = 0;
+        for (var d = today; d >= from; d = d.AddDays(-1))
+        {
+            var s = st[d];
+            if (s == DayState.Completed || s == DayState.Extra) streak++;
+            else if (s == DayState.Missed) break;
+        }
+        return streak;
+    }
+
+    /// <summary>
     /// Consistency = completed scheduled workouts / scheduled workouts that are already due,
     /// over the last 28 days (or since the account was created). Rest days and today's pending workout are excluded.
     /// </summary>

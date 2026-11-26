@@ -9,7 +9,7 @@ public class SplashPage : ContentPage
 {
     public SplashPage()
     {
-        BackgroundColor = Ds.Primary;
+        BackgroundColor = Ds.Bg;
         Content = new Image { Source = "logo_mark.png", WidthRequest = 96, HeightRequest = 96, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
     }
 
@@ -38,15 +38,15 @@ public class WelcomePage : ContentPage
     public WelcomePage()
     {
         NavigationPage.SetHasNavigationBar(this, false);
-        BackgroundColor = Ds.Primary;
+        Background = Ds.HeroBrush;
 
         var hero = new VerticalStackLayout { Spacing = 14, VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Center };
         hero.Add(new Image { Source = "logo_mark.png", WidthRequest = 88, HeightRequest = 88, HorizontalOptions = LayoutOptions.Center });
         hero.Add(Ui.Txt("FitSphere", 38, true, Colors.White, TextAlignment.Center));
-        hero.Add(Ui.Txt("Plan your workouts, track your meals and watch your progress, all in one place.", 16, false, Ds.Mint, TextAlignment.Center));
+        hero.Add(Ui.Txt("Plan your workouts, track your meals and watch your progress, all in one place.", 16, false, Ds.HeroSub, TextAlignment.Center));
 
         var actions = new VerticalStackLayout { Spacing = 8 };
-        actions.Add(Ui.PrimaryBtn("Create account", () => Navigation.PushAsync(new RegisterPage()), Ds.Lime, Ds.Primary));
+        actions.Add(Ui.PrimaryBtn("Create account", () => Navigation.PushAsync(new RegisterPage()), Colors.White, Ds.Deep));
         var login = Ui.LinkBtn("I already have an account", () => Navigation.PushAsync(new LoginPage()), Colors.White);
         actions.Add(login);
 

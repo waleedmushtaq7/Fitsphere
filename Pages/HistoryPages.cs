@@ -28,7 +28,7 @@ public class HistoryPage : BasePage
             {
                 string best = r.WeightKg > 0 ? $"{Num.F(r.WeightKg)} kg x {r.Reps}" : $"{r.Reps} reps";
                 rows.Add(Ui.LeftRight(Ui.Stack(2, Ui.Txt(r.ExerciseName, 15, true), Ui.Sub(r.Date.ToString("d MMM yyyy"), 12)),
-                    Ui.Txt(best, 15, true, Ds.Primary)));
+                    Ui.Txt(best, 15, true, Ds.Soft)));
             }
             _col.Add(Ui.Card(rows));
         }

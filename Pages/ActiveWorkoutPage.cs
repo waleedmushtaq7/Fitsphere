@@ -25,8 +25,8 @@ public class ActiveWorkoutPage : BasePage
     {
         _sid = sessionId;
 
-        _restBar = Ui.Card(Ui.LeftRight(_restLabel, Ui.SmallBtn("Skip", () => { EndRest(); return Task.CompletedTask; }, Ds.Lime, Ds.Primary)),
-            Ds.Primary, Ds.CardRadius, 14);
+        _restBar = Ui.Card(Ui.LeftRight(_restLabel, Ui.SmallBtn("Skip", () => { EndRest(); return Task.CompletedTask; }, Colors.White, Ds.Deep)),
+            null, Ds.CardRadius, 14, false, Ds.HeroBrush);
         _restBar.IsVisible = false;
         _restBar.Margin = new Thickness(Ds.PageMargin, 0, Ds.PageMargin, 12);
 
@@ -150,9 +150,9 @@ public class ActiveWorkoutPage : BasePage
         icon.VerticalOptions = LayoutOptions.Start;
         g.Add(icon, 0, 0);
         g.Add(Ui.Stack(2,
-            Ui.Txt((sg.Kind == "Start" ? "Tip: " : "Suggested: ") + sg.Headline, 13, true, Ds.Primary),
+            Ui.Txt((sg.Kind == "Start" ? "Tip: " : "Suggested: ") + sg.Headline, 13, true, Ds.Soft),
             Ui.Txt(sg.Reason, 12, false, Ds.Text)), 1, 0);
-        return Ui.Card(g, Ds.Mint, Ds.ControlRadius, 12, false);
+        return Ui.Card(g, Ds.Tint, Ds.ControlRadius, 12, false);
     }
 
     static Grid SetGrid()
@@ -204,8 +204,8 @@ public class ActiveWorkoutPage : BasePage
         var chk = new Border { WidthRequest = 44, HeightRequest = 44, StrokeThickness = 0, StrokeShape = Ui.Round(Ds.ControlRadius), Content = tick };
         void Paint()
         {
-            chk.BackgroundColor = s.Completed ? Ds.Primary : Ds.Mint;
-            tick.TextColor = s.Completed ? Colors.White : Ds.Muted;
+            chk.BackgroundColor = s.Completed ? Ds.Emerald : Ds.Tint;
+            tick.TextColor = s.Completed ? Ds.Bg : Ds.Muted;
         }
         Paint();
         chk.OnTap(async () =>
@@ -222,7 +222,7 @@ public class ActiveWorkoutPage : BasePage
             if (s.Completed) StartRest(s.RestSeconds);
         });
 
-        var num = Ui.Txt(s.SetNumber.ToString(), 16, true, Ds.Primary);
+        var num = Ui.Txt(s.SetNumber.ToString(), 16, true, Ds.Soft);
         num.VerticalOptions = LayoutOptions.Center;
         g.Add(num, 0, 0);
         g.Add(wBox, 1, 0);

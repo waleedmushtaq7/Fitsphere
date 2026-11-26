@@ -23,8 +23,8 @@ public class WorkoutsPage : BasePage
         _col.Add(Head("Workouts", false, Ui.SmallBtn("+ New plan", () => Navigation.PushAsync(new PlanEditorPage()))));
 
         var quick = Ui.Cols(2, 12);
-        quick.Add(Ui.MenuRow("ic_library", "Library", "Exercises", () => Navigation.PushAsync(new ExerciseLibraryPage())), 0, 0);
-        quick.Add(Ui.MenuRow("ic_trophy", "History", "Records", () => Navigation.PushAsync(new HistoryPage())), 1, 0);
+        quick.Add(Ui.QuickTile("ic_library", "Library", "Browse exercises", () => Navigation.PushAsync(new ExerciseLibraryPage())), 0, 0);
+        quick.Add(Ui.QuickTile("ic_trophy", "History", "Past workouts", () => Navigation.PushAsync(new HistoryPage())), 1, 0);
         _col.Add(quick);
 
         // ---- My plans ----
@@ -35,7 +35,7 @@ public class WorkoutsPage : BasePage
         {
             var p = plan;
             var info = Ui.Stack(3, Ui.Txt(p.Name, 17, true),
-                Ui.Sub($"{counts[p.Id]} exercises · {(p.DayList.Count > 0 ? string.Join(" ", p.DayList) : "No days")}"));
+                Ui.Sub($"{counts[p.Id]} {(counts[p.Id] == 1 ? "exercise" : "exercises")} · {(p.DayList.Count > 0 ? string.Join(" ", p.DayList) : "No days")}"));
             var actions = Ui.Row(8, Ui.SmallBtn("Start", () => Flow.StartOrResume(Navigation, p), Ds.Primary, Colors.White),
                 Ui.IconButton("ic_edit", () => Navigation.PushAsync(new PlanEditorPage(p.Id)), 38));
             _col.Add(Ui.Card(Ui.LeftRight(info, actions)).OnTap(() => Navigation.PushAsync(new PlanEditorPage(p.Id))));
@@ -50,8 +50,8 @@ public class WorkoutsPage : BasePage
             var names = plans.Where(p => p.HasDay(d.DayOfWeek)).Select(p => p.Name).ToList();
             var st = week[d];
             string tag = st switch { DayState.Completed => "Done", DayState.Missed => "Missed", DayState.Rest => "Rest day", DayState.Scheduled => "Planned", DayState.Extra => "Bonus", _ => "" };
-            Color tagColor = st == DayState.Missed ? Ds.Danger : st == DayState.Completed ? Ds.Primary : Ds.Muted;
-            var day = Ui.Txt(Dates.Days[i], 14, true, d == DateTime.Today ? Ds.Primary : Ds.Text);
+            Color tagColor = st == DayState.Missed ? Ds.Danger : st == DayState.Completed ? Ds.Emerald : Ds.Muted;
+            var day = Ui.Txt(Dates.Days[i], 14, true, d == DateTime.Today ? Ds.Soft : Ds.Text);
             day.WidthRequest = 40;
             var line = new Grid { ColumnSpacing = 8 };
             line.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(40)));
@@ -71,7 +71,7 @@ public class WorkoutsPage : BasePage
         else
             foreach (var sg in suggestions)
             {
-                var tagColor = sg.Kind == "Increase" ? Ds.Primary : sg.Kind == "Reduce" ? Ds.Danger : Ds.Muted;
+                var tagColor = sg.Kind == "Increase" ? Ds.Emerald : sg.Kind == "Reduce" ? Ds.Amber : Ds.Muted;
                 _col.Add(Ui.Card(Ui.Stack(6,
                     Ui.LeftRight(Ui.Txt(sg.ExerciseName, 15, true), Ui.Txt(sg.Headline, 14, true, tagColor)),
                     Ui.Txt("Why: " + sg.Reason, 13, false, Ds.Muted))));

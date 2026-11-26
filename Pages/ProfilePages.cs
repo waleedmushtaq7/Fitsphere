@@ -20,8 +20,8 @@ public class ProfilePage : BasePage
         string initial = (u.FullName ?? "F")[..1].ToUpper();
         var avatar = new Border
         {
-            WidthRequest = 64, HeightRequest = 64, BackgroundColor = Ds.Mint, StrokeThickness = 0, StrokeShape = Ui.Round(32),
-            Content = new Label { Text = initial, FontSize = 26, FontAttributes = FontAttributes.Bold, TextColor = Ds.Primary, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center }
+            WidthRequest = 64, HeightRequest = 64, BackgroundColor = Ds.Tint, StrokeThickness = 0, StrokeShape = Ui.Round(32),
+            Content = new Label { Text = initial, FontSize = 26, FontAttributes = FontAttributes.Bold, TextColor = Ds.Soft, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center }
         };
         var who = new Grid { ColumnSpacing = 16 };
         who.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
@@ -45,8 +45,8 @@ public class ProfilePage : BasePage
             Line("Sex", string.IsNullOrEmpty(u.Sex) ? "Not set" : u.Sex),
             Line("Experience", u.Experience),
             Line("Goal", u.Goal),
-            Line("Equipment", string.Join(", ", u.EquipmentList)),
-            Line("Weekly workouts", u.WeeklyWorkoutGoal.ToString()))));
+            Line("Weekly workouts", u.WeeklyWorkoutGoal.ToString()),
+            EquipmentBlock(u.EquipmentList))));
 
         _col.Add(Ui.SectionHeader("Settings"));
         _col.Add(Ui.MenuRow("ic_user_edit", "Edit profile", "Personal info, experience, goal, equipment", () => Navigation.PushAsync(new ProfileFormPage())));
@@ -69,7 +69,7 @@ public class ProfilePage : BasePage
         notif.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
         notif.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
         notif.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-        notif.Add(Ui.IconBadge("ic_bell", 40, Ds.Mint, 20), 0, 0);
+        notif.Add(Ui.IconBadge("ic_bell", 40, Ds.Tint, 20), 0, 0);
         var nt = Ui.Stack(2, Ui.Txt("Notifications", 16, true), Ui.Sub("Allow workout reminders", 13));
         nt.VerticalOptions = LayoutOptions.Center;
         notif.Add(nt, 1, 0);
@@ -85,7 +85,21 @@ public class ProfilePage : BasePage
     }
 
     static View Stat(string big, string small) =>
-        Ui.Stack(2, Ui.Txt(big, 20, true, Ds.Primary, TextAlignment.Center), Ui.Txt(small, 11, false, Ds.Muted, TextAlignment.Center));
+        Ui.Stack(2, Ui.Txt(big, 20, true, Ds.Soft, TextAlignment.Center), Ui.Txt(small, 11, false, Ds.Muted, TextAlignment.Center));
+
+    /// <summary>Equipment shown as small chips that wrap onto new lines, so long lists never get cut off.</summary>
+    static View EquipmentBlock(List<string> items)
+    {
+        var chips = new FlexLayout { Wrap = Microsoft.Maui.Layouts.FlexWrap.Wrap };
+        foreach (var name in items)
+        {
+            var chip = Ui.Card(Ui.Txt(name, 13, true, Ds.Soft), Ds.Tint, Ds.ControlRadius, 8, false);
+            chip.Padding = new Thickness(12, 6);
+            chip.Margin = new Thickness(0, 0, 8, 8);
+            chips.Add(chip);
+        }
+        return Ui.Stack(8, Ui.Txt("Equipment", 14, false, Ds.Muted), chips);
+    }
 
     static View Line(string label, string value) =>
         Ui.LeftRight(Ui.Txt(label, 14, false, Ds.Muted), Ui.Txt(value, 14, true, align: TextAlignment.End));

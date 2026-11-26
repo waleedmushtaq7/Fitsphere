@@ -43,7 +43,7 @@ public class ProgressPage : BasePage
         ov.Add(Stat(cons.Percent.HasValue ? $"{cons.Percent}%" : "-", "Consistency"), 0, 0);
         ov.Add(Stat(monthWorkouts.ToString(), "Workouts this month"), 1, 0);
         ov.Add(Stat(change.HasValue ? $"{change:+0.0;-0.0;0.0} kg" : "-", "Weight, 30 days"), 2, 0);
-        _col.Add(Ui.Card(ov, Ds.Primary, Ds.HeroRadius, 20));
+        _col.Add(Ui.Card(ov, null, Ds.HeroRadius, 20, false, Ds.HeroBrush));
 
         // ---- goals ----
         var g = new VerticalStackLayout { Spacing = 16 };
@@ -78,7 +78,7 @@ public class ProgressPage : BasePage
             foreach (var m in measures)
             {
                 string ch = Math.Abs(m.Change) < 0.05 ? "no change" : $"{m.Change:+0.0;-0.0} cm";
-                rows.Add(Ui.LeftRight(Ui.Stack(2, Ui.Txt(m.Type, 15, true), Ui.Sub($"{ch} since first record", 12)), Ui.Txt($"{Num.F(m.Latest)} cm", 16, true, Ds.Primary)));
+                rows.Add(Ui.LeftRight(Ui.Stack(2, Ui.Txt(m.Type, 15, true), Ui.Sub($"{ch} since first record", 12)), Ui.Txt($"{Num.F(m.Latest)} cm", 16, true, Ds.Soft)));
             }
             _col.Add(Ui.Card(rows));
         }
@@ -105,13 +105,13 @@ public class ProgressPage : BasePage
             _col.Add(Ui.Card(Ui.Empty("ic_bulb", "Insights need data", "Log workouts, meals and weight for a few days. Every insight shows the numbers behind it.")));
         foreach (var i in insights)
         {
-            Color c = i.Tone == "Warn" ? Ds.Danger : i.Tone == "Good" ? Ds.Primary : Ds.Muted;
+            Color c = i.Tone == "Warn" ? Ds.Amber : i.Tone == "Good" ? Ds.Emerald : Ds.Soft;
             _col.Add(Ui.Card(Ui.Stack(4, Ui.Txt(i.Title, 15, true, c), Ui.Txt(i.Body, 13, false, Ds.Text))));
         }
     }
 
     static View Stat(string big, string small) =>
-        Ui.Stack(2, Ui.Txt(big, 22, true, Colors.White), Ui.Txt(small, 11, false, Ds.Mint));
+        Ui.Stack(2, Ui.Txt(big, 22, true, Colors.White), Ui.Txt(small, 11, false, Ds.HeroSub));
 
     static View GoalRow(string title, string value, double progress, double max) =>
         Ui.Stack(6, Ui.LeftRight(Ui.Txt(title, 14, true), Ui.Sub(value, 13)), Ui.Bar(progress, max));

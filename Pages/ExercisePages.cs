@@ -24,7 +24,7 @@ public class ExerciseLibraryPage : BasePage
 
         var box = new Border
         {
-            BackgroundColor = Colors.White, Stroke = Ds.Line, StrokeThickness = 1, StrokeShape = Ui.Round(Ds.ControlRadius),
+            BackgroundColor = Ds.Field, Stroke = Ds.Line, StrokeThickness = 1, StrokeShape = Ui.Round(Ds.ControlRadius),
             Padding = new Thickness(14, 0), HeightRequest = Ds.ControlHeight
         };
         var line = new Grid { ColumnSpacing = 10 };
@@ -70,7 +70,7 @@ public class ExerciseLibraryPage : BasePage
             g.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
             g.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
             g.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
-            g.Add(Ui.IconBadge("mg_" + e.MuscleGroup.ToLowerInvariant(), 52, Ds.Mint, 30), 0, 0);
+            g.Add(Ui.IconBadge("mg_" + e.MuscleGroup.ToLowerInvariant(), 52, Ds.Tint, 30), 0, 0);
             var t = Ui.Stack(2, Ui.Txt(e.Name, 15, true), Ui.Sub($"{e.MuscleGroup} · {e.Equipment} · {(e.IsCompound ? "Compound" : "Isolation")}", 12));
             t.VerticalOptions = LayoutOptions.Center;
             g.Add(t, 1, 0);
@@ -97,12 +97,12 @@ public class ExerciseDetailPage : BasePage
 
         var art = Ui.Icon("mg_" + ex.MuscleGroup.ToLowerInvariant(), 96);
         art.HorizontalOptions = LayoutOptions.Center;
-        col.Add(Ui.Card(art, Ds.Mint, Ds.HeroRadius, 28, false));
+        col.Add(Ui.Card(art, Ds.Tint, Ds.HeroRadius, 28, false));
 
         var tags = new FlexLayout { Wrap = Microsoft.Maui.Layouts.FlexWrap.Wrap };
         foreach (var t in new[] { ex.MuscleGroup, ex.Equipment, ex.IsCompound ? "Compound" : "Isolation" })
         {
-            var chip = Ui.Card(Ui.Txt(t, 13, true, Ds.Primary), Ds.Mint, Ds.ControlRadius, 8, false);
+            var chip = Ui.Card(Ui.Txt(t, 13, true, Ds.Soft), Ds.Tint, Ds.ControlRadius, 8, false);
             chip.Padding = new Thickness(14, 8);
             chip.Margin = new Thickness(0, 0, 8, 8);
             tags.Add(chip);
@@ -117,7 +117,7 @@ public class ExerciseDetailPage : BasePage
             var g = new Grid { ColumnSpacing = 12 };
             g.ColumnDefinitions.Add(new ColumnDefinition(new GridLength(26)));
             g.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Star));
-            g.Add(Ui.Txt((n++).ToString(), 15, true, Ds.Primary), 0, 0);
+            g.Add(Ui.Txt((n++).ToString(), 15, true, Ds.Soft), 0, 0);
             g.Add(Ui.Txt(s, 15), 1, 0);
             steps.Add(g);
         }

@@ -29,7 +29,7 @@ public class HabitsPage : BasePage
         _col.Add(Head("Habits"));
 
         // ---------- Water ----------
-        var ring = Ui.RingView(u.WaterTargetMl > 0 ? (double)water / u.WaterTargetMl : 0, $"{water / 1000.0:0.0} L", $"of {u.WaterTargetMl / 1000.0:0.0} L", 120);
+        var ring = Ui.RingView(u.WaterTargetMl > 0 ? (double)water / u.WaterTargetMl : 0, $"{water / 1000.0:0.0} L", $"of {u.WaterTargetMl / 1000.0:0.0} L", 120, Ds.Cyan, Ds.Blue);
         var btns = new VerticalStackLayout { Spacing = 8, VerticalOptions = LayoutOptions.Center };
         btns.Add(Ui.SmallBtn("+ 250 ml", async () => { await Svc.Habits.AddWaterAsync(250); await Refresh(); }));
         btns.Add(Ui.SmallBtn("+ 500 ml", async () => { await Svc.Habits.AddWaterAsync(500); await Refresh(); }));
@@ -102,7 +102,7 @@ public class HabitsPage : BasePage
                 right = Ui.Row(8, Ui.Sub("Rest", 12), rest);
                 ((HorizontalStackLayout)right).VerticalOptions = LayoutOptions.Center;
             }
-            else right = Ui.Txt(kv.Value == DayState.Completed ? "Done" : "", 12, true, Ds.Primary);
+            else right = Ui.Txt(kv.Value == DayState.Completed ? "Done" : "", 12, true, Ds.Soft);
             sched.Add(Ui.LeftRight(left, right));
         }
         _col.Add(Ui.Stack(10, Ui.SectionHeader("Next 7 days"), Ui.Card(sched),
@@ -114,7 +114,7 @@ public class HabitsPage : BasePage
             ? $"{cons.Completed} of {cons.Scheduled} scheduled workouts completed in the last {cons.WindowDays} days."
             : "Create a plan with training days. Your score appears after your first scheduled day passes.";
         _col.Add(Ui.Stack(10, Ui.SectionHeader("Consistency score"),
-            Ui.Card(Ui.LeftRight(Ui.Txt(how, 14, false, Ds.Muted), Ui.Txt(pct, 28, true, Ds.Primary)))));
+            Ui.Card(Ui.LeftRight(Ui.Txt(how, 14, false, Ds.Muted), Ui.Txt(pct, 28, true, Ds.Emerald)))));
     }
 
     async Task AddCustomWater()

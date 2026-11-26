@@ -39,11 +39,11 @@ public class NutritionPage : BasePage
         _col.Add(nav);
 
         // calories summary
-        var ring = Ui.RingView(u.CalorieTarget > 0 ? t.Cal / u.CalorieTarget : 0, $"{t.Cal:0}", "kcal", 124, over ? Ds.Danger : Ds.Primary);
+        var ring = Ui.RingView(u.CalorieTarget > 0 ? t.Cal / u.CalorieTarget : 0, $"{t.Cal:0}", "kcal", 124, over ? Ds.Magenta : Ds.Amber, over ? Ds.Rose : Ds.Orange);
         var stats = Ui.Stack(10,
             StatLine("Target", $"{u.CalorieTarget} kcal"),
             StatLine("Consumed", $"{t.Cal:0} kcal"),
-            StatLine(over ? "Over by" : "Remaining", $"{Math.Abs(rem):0} kcal", over ? Ds.Danger : Ds.Primary));
+            StatLine(over ? "Over by" : "Remaining", $"{Math.Abs(rem):0} kcal", over ? Ds.Danger : Ds.Emerald));
         stats.VerticalOptions = LayoutOptions.Center;
         var top = new Grid { ColumnSpacing = 20 };
         top.ColumnDefinitions.Add(new ColumnDefinition(GridLength.Auto));
@@ -69,7 +69,7 @@ public class NutritionPage : BasePage
                 Ui.IconButton("ic_plus", () => Navigation.PushAsync(new AddFoodPage(m, _day)), 38)));
 
             if (items.Count == 0)
-                _col.Add(Ui.Card(Ui.Sub("Nothing logged yet. Tap + to add food.", 14), Colors.White, pad: 14, shadow: false)
+                _col.Add(Ui.Card(Ui.Sub("Nothing logged yet. Tap + to add food.", 14), Ds.Card, pad: 14)
                     .OnTap(() => Navigation.PushAsync(new AddFoodPage(m, _day))));
             else
             {
@@ -153,8 +153,8 @@ public class AddFoodPage : BasePage
         {
             var chip = new Border
             {
-                BackgroundColor = Ds.Mint, StrokeThickness = 0, StrokeShape = Ui.Round(Ds.ControlRadius), Padding = new Thickness(14, 0), HeightRequest = 38,
-                Content = new Label { Text = name, FontSize = 14, TextColor = Ds.Primary, VerticalOptions = LayoutOptions.Center }
+                BackgroundColor = Ds.Tint, StrokeThickness = 0, StrokeShape = Ui.Round(Ds.ControlRadius), Padding = new Thickness(14, 0), HeightRequest = 38,
+                Content = new Label { Text = name, FontSize = 14, TextColor = Ds.Soft, VerticalOptions = LayoutOptions.Center }
             };
             chip.OnTap(tap);
             row.Add(chip);

@@ -19,6 +19,7 @@ public class SplashPage : ContentPage
         try
         {
             await Svc.Db.EnsureAsync();
+            await Svc.Exercises.AllAsync();   // warm the cache so the library opens instantly
             if (await Svc.Auth.RestoreAsync())
             {
                 await Svc.Reminders.RescheduleAsync();

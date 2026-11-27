@@ -11,6 +11,7 @@ public class ActiveWorkoutPage : BasePage
     WorkoutSession _session;
     List<SetLog> _sets = new();
     readonly Dictionary<int, Suggestion> _suggestions = new();
+    readonly Dictionary<int, Exercise> _exById = new();
     readonly Label _planName = Ui.Sub("", 13);
     readonly Label _timer = Ui.Txt("00:00", 24, true);
     readonly Label _progress = Ui.Sub("", 14);
@@ -67,7 +68,11 @@ public class ActiveWorkoutPage : BasePage
             foreach (var g in _sets.GroupBy(x => x.ExerciseId))
             {
                 var ex = all.FirstOrDefault(e => e.Id == g.Key);
-                if (ex != null) _suggestions[g.Key] = await Svc.Insights.SuggestAsync(ex, g.Count(), g.First().TargetReps);
+                if (ex != null)
+                {
+                    _exById[g.Key] = ex;
+                    _suggestions[g.Key] = await Svc.Insights.SuggestAsync(ex, g.Count(), g.First().TargetReps);
+                }
             }
             _planName.Text = _session.PlanName;
             _loaded = true;
@@ -126,7 +131,10 @@ public class ActiveWorkoutPage : BasePage
         {
             var sets = g.ToList();
             var card = new VerticalStackLayout { Spacing = 10 };
-            card.Add(Ui.Txt(sets[0].ExerciseName, 18, true));
+            View title = Ui.Txt(sets[0].ExerciseName, 18, true);
+            if (_exById.TryGetValue(g.Key, out var exObj))
+                title = Ui.LeftRight(title, Ui.LinkBtn("How to", () => Navigation.PushAsync(new ExerciseDetailPage(exObj))));
+            card.Add(title);
             if (_suggestions.TryGetValue(g.Key, out var sg)) card.Add(SuggestionPill(sg));
             card.Add(HeaderRow());
             foreach (var s in sets) card.Add(SetRow(s));

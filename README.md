@@ -26,7 +26,7 @@ Dark "graphite" theme (see `UI/Ds.cs`): graphite background, violet gradient her
 - **Auth & onboarding** – register/login (PBKDF2-hashed passwords), profile setup (sex, age, height, weight, experience, goal, equipment), sex-aware auto-estimated calorie/macro/water targets.
 - **Home** – greeting, date, daily goals, today's workout hero card, nutrition ring + macros, water tracker, weekly dots, consistency score, quick actions, top insight.
 - **Workouts** – create/edit/delete plans, training days, sets/reps/rest, weekly schedule, start/resume session, progression suggestions.
-- **Exercise library** – 59 exercises, 7 muscle groups, equipment filter, search, instructions, built-in line illustrations, replacement suggestions.
+- **Exercise library** – 61 exercises, 7 muscle groups, equipment filter, search (virtualized list, instant filtering), instructions, replacement suggestions, and an animated start/finish photo demo for 59 exercises (muscle-group illustration for the rest). Also reachable via "How to" during a workout.
 - **Workout tracking** – live timer, per-set weight/reps, set completion, automatic rest countdown, history, personal records (PR detection on finish).
 - **Nutrition** – day navigation, calorie ring, protein/carbs/fat bars, 4 meals, add/edit/delete foods, recent + common foods.
 - **Progress** – body weight line chart, measurements, weekly/monthly workout bar charts, goal indicators, overview, edit/delete entries, insights.
@@ -38,6 +38,12 @@ Dark "graphite" theme (see `UI/Ds.cs`): graphite background, violet gradient her
 - **Exercise replacement** (`ExerciseService.ReplacementsAsync`): same muscle group, equipment you own, ranked by movement type, equipment match and past use; each result states why.
 - **Consistency score** (`HabitService.ConsistencyAsync`): completed ÷ scheduled workouts already due, last 28 days; rest days and today's pending workout are excluded.
 - **Progress insights** (`InsightEngine.BuildAsync`): weight trend vs goal, protein/calorie adherence, volume change, hydration, recent PRs. Insights only appear when there is enough data, and each shows its basis.
+
+## Credits
+Exercise photos come from the free-exercise-db project (public domain / Unlicense): https://github.com/yuhonas/free-exercise-db
+
+## Builds
+The GitHub Actions workflow produces two APKs: `FitSphere-debug.apk` and `FitSphere-release.apk` (optimized, noticeably faster). Both are in the `FitSphere-apk` artifact.
 
 ## Notes
 - Data is stored locally; reminders use inexact weekly alarms and are re-registered each time the app opens (they are not restored after a phone reboot until FitSphere is opened).
